@@ -1,0 +1,121 @@
+scalar DateTime
+scalar EmailAddress
+scalar UnsignedInt
+
+type User {
+        """
+        User ID.
+        """
+        id: ID! @id
+        """
+        User First Name
+        """
+        firstName: String! @column
+        """
+        User Last Name"
+        """
+        lastName: String! @column
+        """
+        User's e-mail address
+        """
+        email: EmailAddress @column(overrideType: "string")
+        """
+        Posts published by user
+        """
+        posts: [Post]
+        """
+        Users that this user is following
+        """
+        following: [User] @link
+        """
+        Users that this user is followed by
+        """
+        followers: [User]
+}
+
+type Post {
+        """
+        Post ID
+        """
+        id: ID! @id
+        """
+        Post title
+        """
+        title: String! @column
+        """
+        Post content
+        """
+        content: String! @column
+        """
+        Post Author
+        """
+        author: User! @link
+        """
+        Post published timestamp
+        """
+        publishedAt: DateTime @column(overrideType: "Date")
+        """
+        Users who like this post
+        """
+        likedBy: [User] @link
+}
+
+type Query {
+        testMessage: String!
+        """
+        Get post by ID
+        """
+        post(id: ID!): Post
+}
+
+"""
+Publish post input
+"""
+input PublishPostInput {
+        """
+        Post title
+        """
+        title: String!
+        """
+        Post content
+        """
+        content: String!
+}
+
+type Mutation {
+        """
+        Publish Post
+        """
+        publishPost(input: PublishPostInput!): Post!
+        """
+        Follow user
+        Returns the updated number of followers
+        """
+        followUser(
+                """
+                User's ID to follow
+                """
+                userId: ID!
+        ): UnsignedInt!
+        """
+        Unfollow user
+        Returns the updated numbers of followers
+        """
+        unfollowUser(
+                """
+                User's id to unfollow
+                """
+                userId: ID!
+        ): UnsignedInt!
+        """
+        Like post
+        Returns the updated number of likes received
+        """
+        likePost(
+                """
+                Post's ID to like
+                """
+                postId: ID!
+        ): UnsignedInt!
+
+}
